@@ -17,7 +17,7 @@
     <div class="menu-grid">
       {% for plate in dishes %}
       <div class="dish-card">
-        <img src="/static/{{ plate.image }}" alt="{{ plate.name }}">
+        <img src="{% if plate.image.startswith('http') %}{{ plate.image }}{% else %}/static/{{ plate.image }}{% endif %}" alt="{{ plate.name }} alt="{{ plate.name }}">
         <h3>{{ plate.name }}</h3>
         <p>{{ plate.description }}</p>
         <p class="price">${{ "{:,.0f}".format(plate.price) }}</p>
