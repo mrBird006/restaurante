@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menú del Restaurante</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Menú del Restaurante</h1>
+  </header>
+
+  {% for category, dishes in categories.items() %}
+  <section class="menu-category">
+    <h2>{{ category }}</h2>
+    <div class="menu-grid">
+      {% for plate in dishes %}
+      <div class="dish-card">
+        <img src="/static/{{ plate.image }}" alt="{{ plate.name }}">
+        <h3>{{ plate.name }}</h3>
+        <p>{{ plate.description }}</p>
+        <p class="price">${{ "{:,.0f}".format(plate.price) }}</p>
+        <a href="/plate/{{ plate.slug }}" class="btn">Ver Detalle</a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</body>
+</html>

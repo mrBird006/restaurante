@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ plate.name }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const likeBtn = document.querySelector(".like-btn");
+  const dislikeBtn = document.querySelector(".dislike-btn");
+  const nameInput = document.querySelector('input[name="name"]');
+  const commentForm = document.querySelector(".comment-form");
+
+  // Create and insert email input dynamically
+  const emailLabel = document.createElement("label");
+  emailLabel.textContent = "Correo electrónico";
+  const emailInput = document.createElement("input");
+  emailInput.type = "email";
+  emailInput.name = "email";
+  emailInput.placeholder = "Correo electrónico";
+  emailInput.required = true;
+  commentForm.insertBefore(emailLabel, nameInput.nextSibling);
+  commentForm.insertBefore(emailInput, emailLabel.nextSibling);
+
+  // Restore from localStorage
+  nameInput.value = localStorage.getItem("commenter_name") || "";
+  emailInput.value = localStorage.getItem("commenter_email") || "";
+
+  function toggleInteractionButtons() {
+    const enabled = nameInput.value.trim() && emailInput.value.trim();
+    likeBtn.disabled = !enabled;
+    dislikeBtn.disabled = !enabled;
+  }
+
+  toggleInteractionButtons();
+  nameInput.addEventListener("input", toggleInteractionButtons);
+  emailInput.addEventListener("input", toggleInteractionButtons);
+
+  // Save identity
+  commentForm.addEventListener("submit", () => {
+    localStorage.setItem("commenter_name", nameInput.value.trim());
+    localStorage.setItem("commenter_email", emailInput.value.trim());
+  });
+
+  // Track current state
+  const slug = window.location.pathname.split("/").pop();
+  const voteKey = `vote:${slug}:${emailInput.value}`;
+  let currentVote = localStorage.getItem(voteKey); // "like", "dislike" or null
+
+  function updateVoteUI(likes, dislikes) {
+    likeBtn.innerHTML = `👍 Me gusta (${likes})`;
+    dislikeBtn.innerHTML = `👎 No me gusta (${dislikes})`;
+  }
+
+  function sendVote(action) {
+    const email = emailInput.value.trim();
+    const newVote = currentVote === action ? "none" : action;
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("action", newVote === "none" ? "none" : action);
+
+    fetch(`/api/plate/${slug}/like`, {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      updateVoteUI(data.likes, data.dislikes);
+      if (newVote === "none") {
+        localStorage.removeItem(voteKey);
+        currentVote = null;
+      } else {
+        localStorage.setItem(voteKey, action);
+        currentVote = action;
+      }
+    });
+  }
+
+  likeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    sendVote("like");
+  });
+
+  dislikeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    sendVote("dislike");
+  });
+
+  // Pre-load vote from localStorage
+  if (emailInput.value.trim()) {
+    currentVote = localStorage.getItem(`vote:${slug}:${emailInput.value}`) || null;
+  }
+});
+</script>
+
+<body>
+ <header>
+  <h1>Detalle del Plato</h1>
+  <nav>
+    <a href="/" class="btn">← Volver al Menú</a>
+  </nav>
+</header>
+
+  <section class="dish-detail">
+    <img class="main-image" src="{% if plate.image.startswith('http') %}{{ plate.image }}{% else %}/static/{{ plate.image }}{% endif %}" alt="{{ plate.name }}">
+    <h2>{{ plate.name }}</h2>
+    <p class="price">${{ "{:,.0f}".format(plate.price) }}</p>
+    <p>{{ plate.long_description }}</p>
+    <div class="likes">
+      <form action="/api/plate/{{ plate.slug }}/like" method="post" style="display:inline;">
+        <input type="hidden" name="email" value="test@example.com">
+        <input type="hidden" name="action" value="like">
+        <button class="like-btn" type="submit">👍 Me gusta ({{ plate.likes|length }})</button>
+      </form>
+      <form action="/api/plate/{{ plate.slug }}/like" method="post" style="display:inline;">
+        <input type="hidden" name="email" value="test@example.com">
+        <input type="hidden" name="action" value="dislike">
+        <button class="dislike-btn" type="submit">👎 No me gusta ({{ plate.dislikes|length }})</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="comments-section">
+    <h3>Comentarios ({{ plate.comments|length }})</h3>
+
+    {% for comment in plate.comments %}
+    <div class="comment">
+      <p><strong>{{ comment.name }}</strong>: {{ comment.text }}</p>
+    </div>
+    {% endfor %}
+
+    <form class="comment-form" action="/api/plate/{{ plate.slug }}/comment" method="post">
+      <h4>Escribe tu comentario</h4>
+      <label>Nombre <span class="required">*</span></label>
+      <input type="text" name="name" required>
+
+      <label>Comentario <span class="required">*</span></label>
+      <textarea name="comment" required></textarea>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </section>
+</body>
+</html>
