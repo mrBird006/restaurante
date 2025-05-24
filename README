@@ -1,0 +1,29 @@
+# 🧾 Restaurant Menu App (MongoDB Homework)
+
+This project is part of a **university homework** assignment that demonstrates the use of **MongoDB as a backend database** for a dynamic web application. It features a small restaurant menu with interactive dish pages, implemented with **FastAPI** and **Jinja2 templates**.
+
+---
+
+## 📚 Project Summary
+
+- ✅ Server-side rendered HTML using **FastAPI + Jinja2**
+- ✅ Backend powered by **MongoDB Atlas**
+- ✅ Fully interactive **dish detail pages** with:
+  - Likes / Dislikes (stored by email)
+  - Comment form with local persistence
+- ✅ Responsive UI using custom CSS (no frontend frameworks)
+- ✅ Easily switchable backend (in-memory or MongoDB)
+- ✅ Organized by food categories (Asados, Pastas, Bebidas, etc.)
+
+---
+
+## 🛠 Technologies
+
+- Python 3.10+
+- FastAPI
+- Jinja2 Templates
+- MongoDB Atlas (Free Tier)
+- HTML5 & CSS3
+
+---
+
