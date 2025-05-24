@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from data.memory_client import MemoryPlateDataClient
 from data.mongo_client import MongoPlateDataClient
 import dotenv
 import os
