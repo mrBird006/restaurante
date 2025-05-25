@@ -1,29 +1,83 @@
-# 🧾 Restaurant Menu App (MongoDB Homework)
+📄 Informe Técnico: Aplicación Web con Renderizado en Servidor y Base de Datos MongoDB
+1. Introducción
+Como parte del desarrollo de competencias en bases de datos no relacionales dentro del marco de formación académica, se diseñó y construyó una aplicación web con renderizado del lado del servidor utilizando Python (FastAPI) y una base de datos MongoDB, desplegada mediante el servicio MongoDB Atlas Free Tier.
 
-This project is part of a **university homework** assignment that demonstrates the use of **MongoDB as a backend database** for a dynamic web application. It features a small restaurant menu with interactive dish pages, implemented with **FastAPI** and **Jinja2 templates**.
+El objetivo principal del proyecto es afianzar conocimientos sobre modelado, inserción, consulta y actualización de datos en MongoDB, utilizando una estructura de documentos con diferentes tipos de campos, sin depender de esquemas relacionales rígidos. La elección de una aplicación web responde al enfoque del programa académico, que propone este medio como uno de los múltiples casos de uso que permiten aplicar los conceptos aprendidos.
 
----
+2. Descripción General del Proyecto
+La aplicación consiste en un menú de restaurante digital, accesible desde una interfaz web simple, con páginas generadas dinámicamente desde el servidor utilizando plantillas HTML y CSS. Los datos de los platos, sus reacciones (me gusta, no me gusta) y comentarios de los usuarios son persistidos en MongoDB.
 
-## 📚 Project Summary
+Cada plato cuenta con:
 
-- ✅ Server-side rendered HTML using **FastAPI + Jinja2**
-- ✅ Backend powered by **MongoDB Atlas**
-- ✅ Fully interactive **dish detail pages** with:
-  - Likes / Dislikes (stored by email)
-  - Comment form with local persistence
-- ✅ Responsive UI using custom CSS (no frontend frameworks)
-- ✅ Easily switchable backend (in-memory or MongoDB)
-- ✅ Organized by food categories (Asados, Pastas, Bebidas, etc.)
+Un identificador (slug)
 
----
+Categoría
 
-## 🛠 Technologies
+Nombre
 
-- Python 3.10+
-- FastAPI
-- Jinja2 Templates
-- MongoDB Atlas (Free Tier)
-- HTML5 & CSS3
+Descripción corta y extendida
 
----
+Precio
 
+Ruta de imagen asociada
+
+Listado de correos electrónicos que marcaron "me gusta"
+
+Listado de correos electrónicos que marcaron "no me gusta"
+
+Lista de comentarios (nombre + texto)
+
+El sistema permite que los usuarios:
+
+Naveguen por categorías de platos.
+
+Accedan a una página de detalle para cada plato.
+
+Registren reacciones y comentarios, los cuales se almacenan directamente en la base de datos.
+
+3. Tecnología Utilizada
+FastAPI: Framework moderno para aplicaciones web en Python, utilizado para definir rutas, manejar formularios y renderizar HTML mediante Jinja2.
+
+MongoDB Atlas (Free Tier): Base de datos NoSQL basada en documentos, utilizada como repositorio principal de la información.
+
+Jinja2: Sistema de plantillas para generar HTML desde el backend.
+
+HTML5 & CSS3: Para el diseño de la interfaz de usuario, estructuración de los datos y experiencia visual.
+
+4. Diseño de la Base de Datos
+Se optó por una estructura flexible en MongoDB donde cada documento de tipo “plato” incluye campos embebidos para comentarios y reacciones. Esta decisión permite representar relaciones uno-a-muchos de forma natural, sin necesidad de normalización compleja, aprovechando la estructura de documentos anidados propia de MongoDB.
+
+Esto también facilita la consulta de toda la información de un plato desde una sola operación (find), mejorando la eficiencia al no requerir múltiples colecciones.
+
+Ejemplo de documento:
+
+json
+Copy
+Edit
+{
+  "slug": "costillas-bbq",
+  "category": "Asados",
+  "name": "Costillas BBQ",
+  "description": "...",
+  "price": 28000,
+  "likes": ["correo@ejemplo.com"],
+  "dislikes": [],
+  "comments": [{ "name": "Juan", "text": "Muy bueno" }]
+}
+5. Características Relevantes del Desarrollo
+Interactividad desde el cliente sin frontend complejo: El uso de JavaScript permite registrar likes/dislikes y enviar comentarios sin necesidad de recargar completamente la página, aunque la estructura general sigue siendo una aplicación renderizada desde el servidor.
+
+Persistencia local de usuario: Se utiliza localStorage para guardar el nombre y correo del usuario al comentar, lo cual permite una experiencia continua y personalizada sin necesidad de autenticación.
+
+Modularidad del backend: La lógica de acceso a datos fue abstraída mediante una clase cliente (PlateDataClient), permitiendo intercambiar fácilmente entre una implementación en memoria y una implementación conectada a MongoDB, sin modificar la lógica del servidor.
+
+Separación de responsabilidades: La lógica de presentación (plantillas HTML), estilo (CSS), lógica del servidor (FastAPI) y acceso a datos (cliente Mongo) están desacopladas, permitiendo mantenibilidad y escalabilidad.
+
+Validez como práctica profesional: A pesar de su simplicidad, el proyecto emula prácticas de desarrollo profesional: control de errores, validación de datos, reutilización de componentes, separación de lógica y responsabilidad única.
+
+6. Conclusión
+Este desarrollo ha permitido aplicar de manera práctica los conceptos clave de bases de datos NoSQL utilizando MongoDB, en un contexto web realista. La experiencia incluye no solo el diseño del modelo de datos, sino también su integración, consulta y actualización desde una aplicación interactiva que responde a acciones del usuario.
+
+El uso de MongoDB Atlas demostró ser adecuado para este tipo de escenarios, permitiendo un despliegue rápido y escalable, sin comprometer la flexibilidad que caracteriza a las bases de datos orientadas a documentos.
+
+Este tipo de proyectos integradores no solo consolidan el conocimiento técnico, sino que también preparan para contextos reales donde la estructura relacional no siempre es la opción más eficiente o práctica.
